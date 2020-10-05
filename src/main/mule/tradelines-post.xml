@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="tradelines-postFlow" doc:id="183b9c32-ac96-4dde-b259-640549ab064f" >
+		<logger level="INFO" doc:name="Logger" doc:id="e7a7d41a-bf99-434a-8da2-f77bc0dfe103" message="Payload is: #[payload]"/>
+		<db:insert doc:name="Insert" doc:id="ced7c9cc-ac5a-4759-9899-440eccdc6359" config-ref="Database_Config">
+			<db:sql ><![CDATA[INSERT INTO [dbo].[Tradelines]
+           ([FirstName]
+           ,[LastName]
+		   ,[CreditorName]
+           ,[MinPaymentPercentage]
+           ,[Balance])
+     VALUES
+           (
+           :firstName,
+           :lastName,
+           :creditorName,
+           :minPaymentPercentage,
+           :balance)]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+    'firstName': payload.firstName,
+    'lastName': payload.lastName,
+    'creditorName': payload.creditorName,
+    'minPaymentPercentage':payload.minPaymentPercentage,
+    'balance': payload.balance,
+}]]]></db:input-parameters>
+		</db:insert>
+	</flow>
+</mule>

@@ -1,0 +1,150 @@
+#%RAML 1.0
+title: Tradeline System API
+version: v2.0
+baseUri: http://localhost:8081/api
+  
+types: 
+  tradeline: !include dataTypes/Tradeline.raml
+  errorResponse: !include dataTypes/ErrorResponse.raml
+  successResponse: !include dataTypes/SuccessResponse.raml
+
+traits:
+  tradelineSearch: !include traits/trait-collection.raml
+
+/tradelines:
+  description: |
+    Working with tradelines:
+    * Retrieving all tradelines
+    * Creating tradelines    
+  get:
+    displayName: Get tradelines
+    description: |
+      Retrieve all Tradelines.
+    is: [ tradelineSearch ]
+    queryParameters:
+      firstName:
+        displayName: The first name on the tradeline
+        minLength: 0
+        maxLength: 255
+        required: false
+      lastName:
+        displayName: The last name on the tradeline
+        minLength: 0
+        maxLength: 255
+        required: false         
+      match:
+        displayName: The tradeline name matching rule
+        description: |
+          The tradeline name matching rule
+        type: string
+        enum: [like, equals]
+        default: equals
+        required: false
+    responses:
+      200:
+        body:
+          application/json:
+            type: tradeline[]
+            example: !include examples/get_tradelines_example.yaml
+  post:
+    displayName: Create tradeline
+    description: |
+      Create a new Tradeline
+    body:
+      application/json:
+        type: tradeline
+        example: !include examples/post_tradeline_example.yaml
+    responses:
+      201:
+        body:
+          application/json:
+            type: tradeline
+            example: |
+              {
+                "id": 1,
+                "creditorName": "CBNA",
+                "firstName": "Bob",
+                "lastName": "Smith",
+                "minPaymentPercentage":2.00,
+                "balance":1363.00                
+              }
+      400:
+        body:
+          application/json:
+            type: errorResponse
+            example: |
+              {
+                "message": "Failed to create new tradeline"
+              }
+  /{id}:
+    description: |
+      Working with tradelines:
+      * Retrieving specific tradeline
+      * Updating specific tradeline
+      * Deleting specific tradeline
+    uriParameters:
+      id:
+        type: number
+        example: 1
+        description: Represents the tradeline unique id
+    get:
+      displayName: Get tradeline by id
+      description: Get tradeline by ID
+      responses:
+        200:
+          body:
+            application/json:
+              type: tradeline
+              example: !include examples/get_tradelineById_example.yaml
+        404:
+          body:
+            application/json:
+              type: errorResponse
+              example: |
+                {
+                  "message": "Resource not found"
+                }
+    put:
+      displayName: Update tradeline by id
+      description: Update tradeline specified by ID
+      body:
+        application/json:
+          type: tradeline
+          example: !include examples/put_tradeline_example.yaml
+      responses:
+        200:
+          body:
+            application/json:
+              type: successResponse
+              example: |
+                {
+                  "status": "OK"
+                }
+        404:
+          body:
+            application/json:
+              type: errorResponse
+              example: |
+                {
+                  "message": "Resource not found"
+                }
+    delete:
+      displayName: Delete tradeline by id
+      description: Delete tradeline specified by ID
+      responses:
+        200:
+          body:
+            application/json:
+              type: successResponse
+              example: |
+                {
+                  "status": "OK"
+                }
+        404:
+          body:
+            application/json:
+              type: errorResponse
+              example: |
+                {
+                  "message": "Resource not found"
+                }

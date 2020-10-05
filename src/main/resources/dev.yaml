@@ -1,0 +1,16 @@
+# Properties to be used on the development environment
+
+# Database Connector configuration
+db:
+  host: "localhost"
+  instance: "DESKTOP-U4TGTFI"
+  port: "1433"
+  user: "testUser"
+  password: "mydb01"
+  name: "StratFS"
+
+# Domain to be used in the Location header e.g. localhost
+#api.domain;""
+# example: api.basePath=/api
+#api.basePath:""
+

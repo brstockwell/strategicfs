@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="tradelines-getFlow" doc:id="20b81c5a-8188-432b-a2c1-8a792b73d97f" >
+		<db:select doc:name="Select All Records" doc:id="878be5b0-7350-44fa-b318-d1f173c7b123" config-ref="Database_Config">
+			<db:sql ><![CDATA[SELECT * FROM Tradelines]]></db:sql>
+		</db:select>
+		<logger level="INFO" doc:name="Logger" doc:id="0ca894c1-257c-4e58-a708-754d8ba734cb" message="Payload #[payload]"/>
+		<ee:transform doc:name="Transform Message" doc:id="ffd3e445-5557-438e-b514-3610ec174ee7" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map {
+    id                  : $.Id,
+    firstName           : $.FirstName,
+    lastName            : $.LastName,
+    creditorName        : $.CreditorName,
+    minPaymentPercentage: $.MinPaymentPercentage as String {format: "0.00"},
+    balance				: $.Balance as String {format: "0.00"}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

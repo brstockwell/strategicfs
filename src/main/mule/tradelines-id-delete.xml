@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="tradelines-id-deleteFlow" doc:id="47cf8837-2ee7-4a88-9df3-36f90baa974a" >
+		<ee:transform doc:name="Set Parameters" doc:id="f195bf77-92c1-4b71-a0df-309e73a9a23d" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="TradelineId" ><![CDATA[%dw 2.0
+output application/java
+---
+attributes.uriParams.id]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="Id to delete" doc:id="6e984011-406a-4d32-b3a4-7156226242a4" message="ID to delete: #[vars.TradelineId]"/>
+		<db:delete doc:name="Delete" doc:id="1c33adb8-ec47-4389-9a93-7ba8591909d1" config-ref="Database_Config">
+			<db:sql ><![CDATA[DELETE FROM Tradelines WHERE Id = :id]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{'id': vars.TradelineId}]]]></db:input-parameters>
+		</db:delete>
+	</flow>
+</mule>

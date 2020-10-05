@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="tradelines-id-getFlow" doc:id="feea64f9-1525-418e-8537-3ddef6028004" >
+		<logger level="INFO" doc:name="Tradeline ID Logger" doc:id="7a601a28-0deb-470e-ae03-dde22c0b003c" message="The id is: #[attributes.uriParams.id]"/>
+		<db:select doc:name="Select" doc:id="e378f602-9996-4afb-a772-12c71351cb4e" config-ref="Database_Config">
+			<db:sql ><![CDATA[SELECT * FROM Tradelines
+WHERE Id = :id ]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	"id":attributes.uriParams.id
+}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="8763e9c9-7e35-4e23-8d3a-64b6a2e541a6" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map {
+    id                  : $.Id,
+    firstName           : $.FirstName,
+    lastName            : $.LastName,
+    creditorName        : $.CreditorName,
+    minPaymentPercentage: $.MinPaymentPercentage as String {format: "0.00"},
+    balance				: $.Balance as String {format: "0.00"}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
